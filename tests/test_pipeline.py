@@ -172,7 +172,7 @@ class PipelineTest(unittest.TestCase):
         def fake(url, **kw):
             calls.append(url)
             if url.endswith("index.json"):
-                return json.dumps({"directory": {"item": [{"name": "a8k.htm"}, {"name": "ex99-1.htm"}]}}).encode()
+                return json.dumps({"directory": {"item": [{"name": "a8k.htm"}, {"name": "lunr-20260630xexx991.htm"}]}}).encode()
             return b"<html><body><h1>Q results</h1><p>Revenue was <b>X</b>.</p></body></html>"
         orig, S.http_get, S.SEC_PACE = S.http_get, fake, 0
         try:

@@ -121,7 +121,7 @@ def enrich_sec_8k(entry):
         time.sleep(SEC_PACE)
         idx = json.loads(http_get(ex["base"] + "/index.json"))
         files = [f["name"] for f in idx["directory"]["item"]]
-        cands = [f for f in files if re.search(r"(ex|exhibit)[-_]?99", f, re.I) and f.lower().endswith((".htm", ".html"))]
+        cands = [f for f in files if re.search(r"(exhibit|ex+)[-_]?99", f, re.I) and f.lower().endswith((".htm", ".html"))]
         if not cands:
             return None
         time.sleep(SEC_PACE)
