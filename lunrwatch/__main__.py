@@ -29,8 +29,14 @@ def probe():
             print(f"[ok  ] {name}: {len(body)}バイト")
         except FetchError as e:
             print(f"[fail] {name}: {e}")
-    entry = {"extra": {"base": "https://www.sec.gov/Archives/edgar/data/1844452/000162828026056476"}}
-    text = S.enrich_sec_8k(entry)
+    base = "https://www.sec.gov/Archives/edgar/data/1844452/000162828026056476"
+    try:
+        idx = _json.loads(http_get(base + "/index.json", timeout=20, retries=0))
+        names = [f["name"] for f in idx["directory"]["item"]]
+        print("添付ファイル名:", ", ".join(names))
+    except Exception as e:
+        print(f"[fail] 一覧の解析: {type(e).__name__}")
+    text = S.enrich_sec_8k({"extra": {"base": base}})
     print("8-K添付の抜粋取得:", f"成功（{len(text)}文字）" if text else "取得なし（本文未確認として表示）")
     return 0
 
