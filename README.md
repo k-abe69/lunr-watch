@@ -31,7 +31,7 @@ LUNR（Intuitive Machines）の投資判断に影響しうる「新しい変化�
 
 ### SECの連絡先（要設定）
 `www.sec.gov`（8-K本文など）は、連絡先を含まないUser-Agentに**403**を返した（連絡先らしい文字列を含めると200）。SECはfair access方針でUser-Agentに連絡先の明示を求めている。**403の原因がUser-Agentの形式だけかは未検証**で、連絡先を設定すれば必ず取れるとも断定しない。
-- 連絡先（メール等、本人のもの）をリポジトリ変数 `LUNRWATCH_CONTACT` に設定した後の初回実行で、8-Kの原文抜粋が取れるかを確認する。
+- 連絡先（メール等、本人のもの）をリポジトリの **Secret** `LUNRWATCH_CONTACT` に設定した後の初回実行で、8-Kの原文抜粋が取れるかを確認する。
 - 未設定の間：開示の一覧（種別・日時・項目番号）だけ取得し、8-K/10-Q等は**「新しい開示あり・本文未確認」として要確認**に表示する。本文の内容は評価しない。
 
 ## 重要度の考え方
@@ -73,12 +73,12 @@ python -m lunrwatch build    # サイトだけ再生成
 python -m unittest discover -s tests -v
 ```
 
-環境変数：`LUNRWATCH_DATA` / `LUNRWATCH_SITE` / `LUNRWATCH_CONTACT`。ローカルでは `site/index.html` を開けば見られる。
+環境変数：`LUNRWATCH_DATA` / `LUNRWATCH_SITE` / `LUNRWATCH_CONTACT`（Actionsでは Secret から渡す）。ローカルでは `site/index.html` を開けば見られる。
 
 ## 公開手順
 
 1. 公開リポジトリを作成し、このフォルダの内容をpushする（`data/` は初期の基準データ）。
 2. Settings → Pages → Source を **GitHub Actions** にする。
-3. Settings → Secrets and variables → Actions → **Variables** に `LUNRWATCH_CONTACT`（本人の連絡先メール等）を設定する。
+3. Settings → Secrets and variables → Actions → **Secrets**（Variablesではない）に `LUNRWATCH_CONTACT`（本人の連絡先メール等）を設定する。連絡先はUser-Agentとしてsec.govへ送られるだけで、ログ・保存データ・HTML・エラー表示には出さない（テストで確認）。
 4. Actions → `daily-collect` → **Run workflow** で手動実行する。成功するとPagesのURLが出る。
 5. iPhoneのSafariでそのURLを開き、共有 → **ホーム画面に追加**。

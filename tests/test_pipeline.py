@@ -278,6 +278,42 @@ class PipelineTest(unittest.TestCase):
         self.assertEqual(rec["mid_term"], "参考")
         self.assertTrue(any("確定済み額 $35,683,800" in r and "最大額 $148,358,178" in r for r in rec["reasons"]))
 
+    def test_contact_is_never_written_to_data_site_or_errors(self):
+        import io, contextlib, urllib.request
+        secret = "secret-contact-xyz@example.invalid"
+        os.environ["LUNRWATCH_CONTACT"] = secret
+        seen = {}
+        class Boom(Exception):
+            pass
+        def fake_urlopen(req, timeout=0):
+            seen["ua"] = req.headers.get("User-agent")
+            raise OSError("connection refused for " + req.full_url)
+        orig = urllib.request.urlopen
+        urllib.request.urlopen = fake_urlopen
+        try:
+            cfg = {"sources": [{"id": "n", "name": "N", "type": "rss", "tier": "media", "critical": True, "enabled": True,
+                                "relevance": "name", "url": "https://example.test/feed"}]}
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                import lunrwatch.util as U
+                orig_sleep, U.time.sleep = U.time.sleep, lambda *_: None
+                try:
+                    store = Store(self.dir)
+                    run_collect(cfg, RULES, store, now=T0)
+                    build_site(Store(self.dir), cfg, os.path.join(self.dir, "site"))
+                finally:
+                    U.time.sleep = orig_sleep
+        finally:
+            urllib.request.urlopen = orig
+            os.environ.pop("LUNRWATCH_CONTACT", None)
+        self.assertIn(secret, seen["ua"])  # 送信先へのUser-Agentにだけ使われる
+        blob = buf.getvalue()
+        for root, _, files in os.walk(self.dir):
+            for f in files:
+                blob += open(os.path.join(root, f), encoding="utf-8", errors="replace").read()
+        self.assertNotIn(secret, blob)
+        self.assertIn("接続失敗", blob)  # 失敗理由は短い定型文のみ
+
     def test_feed_parsers(self):
         rss = b"""<rss><channel><item><title>A &amp; B</title><link>https://x.test/a</link>
         <pubDate>Mon, 05 Jan 2026 10:00:00 GMT</pubDate><description>&lt;p&gt;hi&lt;/p&gt;</description></item>
