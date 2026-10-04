@@ -1,0 +1,131 @@
+{
+  "_comment": "情報源の設定。enabled=false で無効化、追加は同じ形式で行を足す。type: sec / rss / usaspending / unsupported。tier: sec(SEC開示), official(企業公式), gov(政府機関), peer(提携・競合の公式), media(報道), aggregator(報道の集約), 重要な情報源は critical=true。relevance: self=LUNR名がなくても通す, name=LUNR関連語が必須, peer=競合・政策の関連語が必須。 pages=N はWordPress系フィードの ?paged=1..N を取得（1ページ10件程度のため）。",
+  "sources": [
+    {
+      "id": "im_ir",
+      "name": "Intuitive Machines 公式IR（プレスリリースRSS）",
+      "type": "rss",
+      "tier": "official",
+      "url": "https://investors.intuitivemachines.com/rss/news-releases.xml",
+      "critical": true,
+      "enabled": true,
+      "relevance": "self"
+    },
+    {
+      "id": "sec_edgar",
+      "name": "SEC EDGAR（Intuitive Machines開示）",
+      "type": "sec",
+      "tier": "sec",
+      "url": "https://data.sec.gov/submissions/CIK0001844452.json",
+      "cik": "1844452",
+      "critical": true,
+      "enabled": true,
+      "relevance": "self",
+      "baseline_days": 90
+    },
+    {
+      "id": "usaspending",
+      "name": "USAspending（連邦政府の契約記録）",
+      "type": "usaspending",
+      "tier": "gov",
+      "url": "https://api.usaspending.gov/api/v2/search/spending_by_award/",
+      "recipient": "Intuitive Machines",
+      "critical": false,
+      "enabled": true,
+      "relevance": "self",
+      "baseline_days": 60
+    },
+    {
+      "id": "nasa_news",
+      "name": "NASA ニュース（RSS）",
+      "type": "rss",
+      "tier": "gov",
+      "url": "https://www.nasa.gov/news-release/feed/",
+      "critical": false,
+      "enabled": true,
+      "relevance": "peer",
+      "pages": 3
+    },
+    {
+      "id": "spacenews_im",
+      "name": "SpaceNews（Intuitive Machinesタグ）",
+      "type": "rss",
+      "tier": "media",
+      "url": "https://spacenews.com/tag/intuitive-machines/feed/",
+      "critical": false,
+      "enabled": true,
+      "relevance": "self"
+    },
+    {
+      "id": "spacenews_all",
+      "name": "SpaceNews（全体フィード）",
+      "type": "rss",
+      "tier": "media",
+      "url": "https://spacenews.com/feed/",
+      "critical": false,
+      "enabled": true,
+      "relevance": "peer",
+      "pages": 3
+    },
+    {
+      "id": "gnews_im",
+      "name": "Google News検索「Intuitive Machines」",
+      "type": "rss",
+      "tier": "aggregator",
+      "url": "https://news.google.com/rss/search?q=%22Intuitive+Machines%22+OR+LUNR+when:7d&hl=en-US&gl=US&ceid=US:en",
+      "critical": true,
+      "enabled": true,
+      "relevance": "name"
+    },
+    {
+      "id": "gnews_lanteris",
+      "name": "Google News検索「Lanteris / Nova-C / CLPS」",
+      "type": "rss",
+      "tier": "aggregator",
+      "url": "https://news.google.com/rss/search?q=Lanteris+OR+%22Nova-C%22+OR+%22Nova-D%22+OR+%22Lunar+Terrain+Vehicle%22+when:7d&hl=en-US&gl=US&ceid=US:en",
+      "critical": false,
+      "enabled": true,
+      "relevance": "peer"
+    },
+    {
+      "id": "firefly_news",
+      "name": "Firefly Aerospace（競合・公式ブログ）",
+      "type": "rss",
+      "tier": "peer",
+      "url": "https://fireflyspace.com/feed/",
+      "critical": false,
+      "enabled": true,
+      "relevance": "peer"
+    },
+    {
+      "id": "astrobotic_news",
+      "name": "Astrobotic（競合・公式）",
+      "type": "rss",
+      "tier": "peer",
+      "url": "https://astrobotic.com/feed/",
+      "critical": false,
+      "enabled": true,
+      "relevance": "peer"
+    },
+    {
+      "id": "ispace_news",
+      "name": "ispace（競合・公式）",
+      "type": "rss",
+      "tier": "peer",
+      "url": "https://ispace-inc.com/feed/",
+      "critical": false,
+      "enabled": true,
+      "relevance": "peer"
+    },
+    {
+      "id": "x_social",
+      "name": "X（SNS）",
+      "type": "unsupported",
+      "tier": "social",
+      "url": "https://x.com/",
+      "critical": false,
+      "enabled": false,
+      "note": "無料で規約に沿った安定取得手段がないため初版は未対応。"
+    }
+  ]
+}

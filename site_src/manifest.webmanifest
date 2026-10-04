@@ -1,0 +1,12 @@
+{
+  "name": "LUNR Watch",
+  "short_name": "LUNR Watch",
+  "description": "LUNR（Intuitive Machines）の投資判断に関わる新しい変化を毎朝確認する個人用ツール",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "lang": "ja",
+  "icons": [{"src": "icon-512.png", "sizes": "512x512", "type": "image/png"}, {"src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png"}]
+}

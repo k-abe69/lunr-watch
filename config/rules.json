@@ -1,0 +1,237 @@
+{
+  "_comment": "ルールベース判定の設定。正規表現は大文字小文字を区別しない。AIや外部APIは使わない。 peer_relevance は月面関連語のみ（競合名だけでは通さない）。exclude_title は株価ページ・銘柄一覧・値動きだけの記事・個人予想の除外。 sched_notice=日程告知（重要度を上げない）、results_title=決算関連の見出し（語だけで方向を判定しない）、amount_qualifier=金額の限定語。",
+  "schedule": {
+    "jst_hour": 7,
+    "note": "GitHub Actionsのcronは UTC。.github/workflows/daily.yml の cron を変えて時刻を変更する。"
+  },
+  "lookback": {
+    "overlap_hours": 36,
+    "max_days": 7,
+    "recent_cluster_days": 7
+  },
+  "self_name": "Intuitive Machines|\\bLUNR\\b|Nova-?C|Nova-?D|Nova Space|Lunar Data Network|Lanteris|KinetX|Steve Altemus|\\bIM-[1-9]\\b|Near Space Network",
+  "peer_relevance": "CLPS|Commercial Lunar Payload|\\blunar\\b|Moon Base|moon landing|Lunar Terrain Vehicle|\\bLTV\\b|Artemis|Near Space Network|cislunar|NASA budget|NASA.{0,20}appropriation|Moon to Mars|Blue Ghost|Griffin (Mission|lander)|Peregrine|Resilience lander|(on|for|to|at) (the )?Moon\\b",
+  "themes": {
+    "決算・財務": "earnings|quarter(ly)?|revenue|net loss|guidance|backlog|cash flow|10-Q|10-K|financial results|profit|EBITDA|outlook|\\bQ[1-4]\\b|second quarter|first quarter",
+    "受注・契約": "award(ed)?|contract|task order|selected|IDIQ|wins?\\b|order\\b|agreement|NSN|Lunar Terrain Vehicle|\\bLTV\\b",
+    "月面ミッション": "IM-[1-9]|Nova-?[CD]|lander|landing|launch|scrub|delay|anomaly|tipped|moon|lunar surface|CLPS",
+    "通信・衛星": "relay|data relay|satellite|Lanteris|Maxar|communications?|Near Space Network|\\bNSN\\b|Lunar Data Network|orbital transfer",
+    "資金調達・希薄化": "offering|convertible|warrants?|at-the-market|\\bATM\\b|shelf|S-3|424B|dilut|notes due|capital raise|private placement|equity (line|issuance)",
+    "政策・予算": "budget|appropriation|Congress|Senate|administrator|policy|Artemis|Moon to Mars|executive order|\\bFY ?20\\d\\d",
+    "提携・競合": "Firefly|Astrobotic|ispace|Blue Origin|SpaceX|partner|teaming|collaborat|competitor|Lockheed|Nokia|Blue Ghost|Griffin|acquisition|acquires?|acquired|merger"
+  },
+  "direction_negative": "fail(ed|ure)?|anomaly|tipp(ed|ing)|scrub(bed)?|delay(ed|s)?|postpone|lawsuit|investigation|downgrade|going concern|plunge|lost\\b|cancel(led|ed)?|shortfall|miss(es|ed)?\\b",
+  "direction_positive": "awarded|selected|secures?\\b|books? .{0,12}order|wins?\\b|successful(ly)?",
+  "uncertain_words": "reportedly|rumou?r|sources? (say|said)|could|may\\b|might|plans? to|expected to|aims? to|considering|talks",
+  "short_important": "earnings|financial results|guidance|offering|convertible|going concern|anomaly|scrub|delay|tipp|awarded|task order|selected|landing|launch(es|ed)?\\b|lawsuit|investigation|downgrade|cancel",
+  "mid_important": "CLPS|Lunar Terrain Vehicle|\\bLTV\\b|Near Space Network|\\bNSN\\b|Artemis|budget|appropriation|Nova-?D|IM-[3-9]|Lanteris|task order|IDIQ|data relay",
+  "sec_forms": {
+    "10-K": {
+      "short": "重要",
+      "mid": "重要",
+      "theme": "決算・財務",
+      "direction": "不明",
+      "why": "年次報告書。業績・リスク要因・キャッシュ・受注残が開示される定期開示。",
+      "follow": [
+        "売上・受注残・営業キャッシュフローの前年比",
+        "継続企業・資金繰りに関する記載",
+        "新たなリスク要因"
+      ]
+    },
+    "10-Q": {
+      "short": "重要",
+      "mid": "重要",
+      "theme": "決算・財務",
+      "direction": "不明",
+      "why": "四半期報告書。業績・キャッシュ・受注残が開示される定期開示。",
+      "follow": [
+        "売上・粗利・キャッシュ残高の前四半期比",
+        "受注残と通期見通しの変更",
+        "資金調達・希薄化に関する記載"
+      ]
+    },
+    "S-3": {
+      "short": "重要",
+      "mid": "注目",
+      "theme": "資金調達・希薄化",
+      "direction": "混在",
+      "why": "株式・債券等の発行に使える登録書類。実際の発行条件は別途の目論見書補足で決まる。",
+      "follow": [
+        "発行上限額と実際の発行の有無",
+        "使途と希薄化の規模"
+      ]
+    },
+    "424B": {
+      "short": "重要",
+      "mid": "注目",
+      "theme": "資金調達・希薄化",
+      "direction": "混在",
+      "why": "目論見書補足。実際の証券発行条件が示される。新株発行は希薄化要因だが、資金確保の面もある。",
+      "follow": [
+        "発行株数・価格・調達額",
+        "資金使途",
+        "既存株主への希薄化率"
+      ]
+    },
+    "S-8": {
+      "short": "参考",
+      "mid": "参考",
+      "theme": "資金調達・希薄化",
+      "direction": "不明",
+      "why": "従業員向け株式報酬の登録。通常は定型的。",
+      "follow": []
+    },
+    "4": {
+      "short": "参考",
+      "mid": "参考",
+      "theme": "決算・財務",
+      "direction": "不明",
+      "why": "役員・大株主の株式取引報告。取引理由（報酬付与・税金対応・売買）は本文で要確認。",
+      "follow": [
+        "取引の種類（売買か報酬付与か）",
+        "継続的な売却の有無"
+      ]
+    },
+    "144": {
+      "short": "参考",
+      "mid": "参考",
+      "theme": "決算・財務",
+      "direction": "不明",
+      "why": "制限株式等の売却予定の届出。実際の売却規模は別途確認が必要。",
+      "follow": [
+        "売却予定株数",
+        "過去の売却との連続性"
+      ]
+    },
+    "SC 13": {
+      "short": "参考",
+      "mid": "参考",
+      "theme": "決算・財務",
+      "direction": "不明",
+      "why": "大量保有報告。保有者の変化を示す。",
+      "follow": [
+        "保有比率の変化と保有者"
+      ]
+    },
+    "DEF 14A": {
+      "short": "参考",
+      "mid": "参考",
+      "theme": "決算・財務",
+      "direction": "不明",
+      "why": "株主総会の委任状。議案・役員報酬・増資授権枠の変更が含まれる場合がある。",
+      "follow": [
+        "授権株式数の増加議案",
+        "株式報酬の規模"
+      ]
+    }
+  },
+  "sec_8k_items": {
+    "1.01": {
+      "short": "重要",
+      "mid": "重要",
+      "theme": "受注・契約",
+      "direction": "不明",
+      "why": "重要な契約の締結（Item 1.01）。内容は本文で確認が必要。",
+      "follow": [
+        "契約の相手・金額・期間",
+        "確定額か最大枠か"
+      ]
+    },
+    "1.02": {
+      "short": "重要",
+      "mid": "重要",
+      "theme": "受注・契約",
+      "direction": "不明",
+      "why": "重要な契約の終了（Item 1.02）。",
+      "follow": [
+        "終了の理由と影響額"
+      ]
+    },
+    "2.02": {
+      "short": "重要",
+      "mid": "重要",
+      "theme": "決算・財務",
+      "direction": "不明",
+      "why": "決算発表（Item 2.02）。数値の良否は添付の本文で確認が必要。",
+      "follow": [
+        "売上・受注残・キャッシュの前期比",
+        "通期見通しの変更の有無",
+        "資金調達・希薄化への言及"
+      ]
+    },
+    "2.03": {
+      "short": "重要",
+      "mid": "注目",
+      "theme": "資金調達・希薄化",
+      "direction": "混在",
+      "why": "重大な債務の発生（Item 2.03）。資金確保だが、返済・転換条件の確認が必要。",
+      "follow": [
+        "金額・金利・転換条件",
+        "返済期限"
+      ]
+    },
+    "3.02": {
+      "short": "重要",
+      "mid": "注目",
+      "theme": "資金調達・希薄化",
+      "direction": "混在",
+      "why": "未登録の株式等の売却（Item 3.02）。新株発行は希薄化要因。",
+      "follow": [
+        "発行株数・価格",
+        "既存株主への希薄化率"
+      ]
+    },
+    "5.02": {
+      "short": "注目",
+      "mid": "注目",
+      "theme": "決算・財務",
+      "direction": "不明",
+      "why": "役員の異動（Item 5.02）。",
+      "follow": [
+        "退任・就任者の役職と理由"
+      ]
+    },
+    "5.07": {
+      "short": "参考",
+      "mid": "参考",
+      "theme": "決算・財務",
+      "direction": "不明",
+      "why": "株主総会の議決結果（Item 5.07）。",
+      "follow": [
+        "増資授権枠などの議案結果"
+      ]
+    },
+    "7.01": {
+      "short": "注目",
+      "mid": "注目",
+      "theme": "決算・財務",
+      "direction": "不明",
+      "why": "Regulation FD開示（Item 7.01）。投資家向け資料等。",
+      "follow": [
+        "添付資料の内容"
+      ]
+    },
+    "8.01": {
+      "short": "注目",
+      "mid": "注目",
+      "theme": "決算・財務",
+      "direction": "不明",
+      "why": "その他の重要事項（Item 8.01）。内容は本文で確認が必要。",
+      "follow": [
+        "開示された事項の内容"
+      ]
+    },
+    "9.01": {
+      "short": "参考",
+      "mid": "参考",
+      "theme": "決算・財務",
+      "direction": "不明",
+      "why": "添付書類の一覧（Item 9.01）。",
+      "follow": []
+    }
+  },
+  "exclude_title": "stock price|\\bquote\\b|interactive (stock )?chart|latest stock news|per share|shares? (up|down|fall|fell|gap|rise|rose|jump|slide|slip)|stock (falls|rises|drops|jumps|price (up|down))|52-week|stock rated|price target|should you buy|buy or sell|\\bLUNR\\d{6}[CP]|(put|call) \\(|Inc\\.? - Class A|\\bprediction\\b|rockets higher|hype|royalt|TSX|Actuals & Estimates|Live Price|Stock Forecast|GF Score|stock (is )?climbing|stock today|Which (Space )?Stock|Which Has More Potential|reportedly a|premarket|precious metals|Mining|\\bvs\\.?\\s|versus|outrun|outperform|stocks? to (buy|watch)|best .{0,20}stocks|APOD|Webb|Hubble",
+  "sched_notice": "announces? date|to (report|host|announce|release).{0,50}(results|call|webcast)|conference call|webcast|to present at|investor conference|to participate in",
+  "results_title": "financial results|earnings|reports? (first|second|third|fourth) quarter|\\bQ[1-4]\\b.{0,20}(results|miss|beat|loss|revenue)|(revenue|loss).{0,20}\\bQ[1-4]\\b",
+  "amount_qualifier": "up to|more than|over|anticipated|potential|estimated|ceiling|maximum|valued|worth|expected|approximately|as much as"
+}
