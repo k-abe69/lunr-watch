@@ -17,8 +17,8 @@ LUNR（Intuitive Machines）の投資判断に影響しうる「新しい変化�
 
 | ID | 情報源 | 状態 |
 |---|---|---|
-| im_ir | Intuitive Machines 公式IR プレスリリースRSS（`/rss/news-releases.xml`） | ✅ 取得可（直近10件）。配信されるのは**冒頭約300字の抜粋**で、全文は未取得 |
-| sec_edgar | SEC EDGAR 公式API（8-K・10-Q/K・S-3・424B・Form 4等） | ✅ 一覧は取得可。**本文の取得は連絡先の設定後に実取得で要確認**（下記） |
+| im_ir | Intuitive Machines 公式IR プレスリリースRSS（`/rss/news-releases.xml`） | ⚠ ローカルPCからは取得可（直近10件・冒頭約300字の抜粋）。**GitHub Actions上では2026-10-04に4回ともタイムアウト**（原因は未特定）。その間は「確認が不完全」と表示し、SEC・報道で補う |
+| sec_edgar | SEC EDGAR 公式API（8-K・10-Q/K・S-3・424B・Form 4等） | ✅ 一覧は取得可。Secret設定後、GitHub上で `www.sec.gov` の提出書類一覧も取得できた。8-K添付の抜粋は、判定パターン修正後の実取得を次回の新しい8-Kで確認 |
 | usaspending | USAspending API（政府の契約記録） | ✅ 確定額（obligation）とオプション含む最大額を区別して取得 |
 | nasa_news / spacenews_* | NASA・SpaceNews のRSS（3ページ分） | ✅ 月面・CLPS等の語が見出しにあるものだけ採用 |
 | gnews_* | Google News RSS検索 | ✅ 報道の集約。株価ページ・値動き記事・別会社は除外 |
@@ -30,7 +30,7 @@ LUNR（Intuitive Machines）の投資判断に影響しうる「新しい変化�
 - 未対応・取得できない部分は画面に「未対応」「本文未確認」と表示し、確認済みとは扱わない。
 
 ### SECの連絡先（要設定）
-`www.sec.gov`（8-K本文など）は、連絡先を含まないUser-Agentに**403**を返した（連絡先らしい文字列を含めると200）。SECはfair access方針でUser-Agentに連絡先の明示を求めている。**403の原因がUser-Agentの形式だけかは未検証**で、連絡先を設定すれば必ず取れるとも断定しない。
+`www.sec.gov`（8-K本文など）は、連絡先を含まないUser-Agentに**403**を返した（連絡先らしい文字列を含めると200）。SECはfair access方針でUser-Agentに連絡先の明示を求めている。連絡先をSecretで設定したGitHub上の実行では、同じ提出書類の一覧が取得できた（2026-10-04）。ただし常に取れるとは断定しない。
 - 連絡先（メール等、本人のもの）をリポジトリの **Secret** `LUNRWATCH_CONTACT` に設定した後の初回実行で、8-Kの原文抜粋が取れるかを確認する。
 - 未設定の間：開示の一覧（種別・日時・項目番号）だけ取得し、8-K/10-Q等は**「新しい開示あり・本文未確認」として要確認**に表示する。本文の内容は評価しない。
 
