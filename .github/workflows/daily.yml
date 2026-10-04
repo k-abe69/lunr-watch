@@ -28,6 +28,10 @@ jobs:
         env:
           LUNRWATCH_CONTACT: ${{ secrets.LUNRWATCH_CONTACT }}   # 推奨。SEC等へ送るUser-Agentの連絡先（本人のもの）。Secretsで受け取りログでも伏せられる。未設定でも動くが、8-K本文の抜粋は取得しない
         run: python -m lunrwatch run
+      - name: Probe primary sources (diagnostic only)
+        env:
+          LUNRWATCH_CONTACT: ${{ secrets.LUNRWATCH_CONTACT }}
+        run: python -m lunrwatch probe || true
       - name: Commit data
         run: |
           git config user.name "lunr-watch-bot"
