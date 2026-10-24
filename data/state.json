@@ -1,37 +1,37 @@
 {
  "sources": {
   "astrobotic_news": {
-   "last_success": "2026-10-23T00:42:14Z"
+   "last_success": "2026-10-24T00:45:41Z"
   },
   "firefly_news": {
-   "last_success": "2026-10-23T00:42:14Z"
+   "last_success": "2026-10-24T00:45:41Z"
   },
   "gnews_im": {
-   "last_success": "2026-10-23T00:42:14Z"
+   "last_success": "2026-10-24T00:45:41Z"
   },
   "gnews_lanteris": {
-   "last_success": "2026-10-23T00:42:14Z"
+   "last_success": "2026-10-24T00:45:41Z"
   },
   "im_ir": {
    "last_success": "2026-10-04T13:52:44Z"
   },
   "ispace_news": {
-   "last_success": "2026-10-23T00:42:14Z"
+   "last_success": "2026-10-24T00:45:41Z"
   },
   "nasa_news": {
-   "last_success": "2026-10-23T00:42:14Z"
+   "last_success": "2026-10-24T00:45:41Z"
   },
   "sec_edgar": {
-   "last_success": "2026-10-23T00:42:14Z"
+   "last_success": "2026-10-24T00:45:41Z"
   },
   "spacenews_all": {
-   "last_success": "2026-10-23T00:42:14Z"
+   "last_success": "2026-10-24T00:45:41Z"
   },
   "spacenews_im": {
-   "last_success": "2026-10-23T00:42:14Z"
+   "last_success": "2026-10-24T00:45:41Z"
   },
   "usaspending": {
-   "last_success": "2026-10-23T00:42:14Z"
+   "last_success": "2026-10-24T00:45:41Z"
   }
  }
 }
